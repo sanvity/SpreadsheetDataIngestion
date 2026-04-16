@@ -298,7 +298,7 @@ def render_chat() -> None:
 
     chat_container = st.container()
     with chat_container:
-        recent_messages = st.session_state.chat_messages[-2:]
+        recent_messages = st.session_state.chat_messages[-1:]
         for message in recent_messages:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
@@ -409,6 +409,19 @@ def inject_styles() -> None:
             backdrop-filter: blur(14px);
             border-right: 1px solid rgba(148, 163, 184, 0.2);
         }
+        [data-testid="stSidebar"] * {
+            color: #0f172a;
+        }
+        [data-testid="stSidebar"] p,
+        [data-testid="stSidebar"] span,
+        [data-testid="stSidebar"] div,
+        [data-testid="stSidebar"] label {
+            color: #ffffff !important;
+        }
+        [data-testid="stSidebar"] code {
+            color: #000000 !important;
+            background: rgba(15, 23, 42, 0.08) !important;
+        }
         div[data-testid="stVerticalBlock"] > div:has(> div[data-testid="stChatMessage"]) {
             padding-bottom: 0.5rem;
         }
@@ -443,14 +456,18 @@ def inject_styles() -> None:
             -webkit-text-fill-color: rgba(255,255,255,0.72) !important;
             opacity: 1 !important;
         }
+    
         [data-testid="stChatInput"] {
             position: fixed;
-            right: 2rem;
+            left: calc(50% + 2rem);
+            transform: translateX(+40%);
             bottom: 1.5rem;
-            width: min(42vw, 640px);
+            width: min(38vw, 500px);
+            max-width: 1400px;  /* match .block-container */
             z-index: 1000;
             background: rgba(15, 23, 42, 0.0);
         }
+        
         [data-testid="stChatInput"] > div {
             background: rgba(15, 23, 42, 0.92) !important;
             border-radius: 18px !important;
@@ -458,7 +475,7 @@ def inject_styles() -> None:
         }
         [data-testid="stChatInput"] button {
             background: #ff4b4b !important;
-            color: white !important;
+            color: #ffffff !important;
         }
         @media (max-width: 1100px) {
             [data-testid="stChatInput"] {
@@ -478,7 +495,7 @@ def inject_styles() -> None:
 
 def main() -> None:
     st.set_page_config(
-        page_title="Data Extraction & Provenance",
+        page_title="Spreadsheet Data Ingestion",
         page_icon="📊",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -487,7 +504,24 @@ def main() -> None:
     init_db()
     ensure_session_defaults()
 
-    st.title("Data Extraction & Provenance")
+
+    # Force heading color to black
+    st.markdown(
+        """
+        <style>
+        h1 {
+            color: black !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+    # Add logo (local file or URL)
+    st.image("transparent_logo.png", width=300)  # replace with your logo path or URL
+
+    st.title("Spreadsheet Data Ingestion")
     st.caption("Upload unstructured Excel workbooks, inspect extracted tables, and query them with strict cell-level traceability.")
 
     render_sidebar()
